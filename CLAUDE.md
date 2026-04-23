@@ -13,12 +13,11 @@ This exists because the Energy24by7 iCON inverter device (ESP32-based, MAC: 9C:1
 - **Auth flow:** Laravel session — GET `/login` for CSRF token (hidden input `name="_token"`) → POST `/login` with `_token`, `email`, `password` → session cookie → GET `/solar-energy-data`
 
 ## How it works
-1. `SolarFetchService` (BackgroundService) runs on a configurable interval (default 15 min)
+1. `SolarFetchService` (BackgroundService) runs on a configurable interval (default 5 min)
 2. Each cycle creates a fresh `HttpClient` with its own `CookieContainer`
 3. Logs in using the portal's Laravel auth flow
 4. Fetches today's and monthly data from `/solar-energy-data?filterType=today&deviceId=...`
-5. Logs out via `POST /logout` with the CSRF token
-6. Stores results in `SolarDataCache` (thread-safe, in-memory)
+5. Stores results in `SolarDataCache` (thread-safe, in-memory)
 6. `Program.cs` exposes `/solar` and `/health` endpoints via ASP.NET Core Minimal API
 
 ## API endpoints
@@ -170,7 +169,8 @@ type: vertical-stack
 cards:
   - type: custom:mushroom-template-card
     primary: iCON Solar — today
-    secondary: swasti · CAA0006 · Kollam
+    secondary: >
+      swasti · CAA0006 · Kollam · updated {{ states('sensor.energy24by7_icon_data') | as_timestamp | timestamp_custom('%I:%M %p') }}
     icon: mdi:solar-power
     icon_color: amber
     badge_icon: mdi:check-circle
