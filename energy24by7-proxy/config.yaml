@@ -1,6 +1,6 @@
 name: Energy24by7 Proxy
 description: Fetches solar data from the Energy24by7 customer portal and exposes it as a local REST API.
-version: "1.0.0"
+version: "1.0.1"
 slug: energy24by7_proxy
 init: false
 arch:
@@ -15,7 +15,7 @@ ports_description:
 options:
   email: ""
   password: ""
-  device_id: "7b8a4e55-04d3-4add-8c2f-74029af8ccf9"
+  device_id: ""
   fetch_interval: 900
 schema:
   email: str
