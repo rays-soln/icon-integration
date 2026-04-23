@@ -51,7 +51,6 @@ This exists because the Energy24by7 iCON inverter device (ESP32-based, MAC: 9C:1
 
 ## Project structure
 ```
-ha-addons/
 ├── repository.json               # HA add-on repository descriptor
 └── energy24by7-proxy/
     ├── config.yaml               # Add-on metadata, ports, options schema

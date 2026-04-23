@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "energy24by7-proxy", "ha-addons\energy24by7-proxy\src\energy24by7-proxy.csproj", "{2FCA52F7-3153-AF9F-390A-4D587964A246}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "energy24by7-proxy", "energy24by7-proxy\src\energy24by7-proxy.csproj", "{2FCA52F7-3153-AF9F-390A-4D587964A246}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
