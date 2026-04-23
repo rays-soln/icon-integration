@@ -1,0 +1,9 @@
+# credentials
+.env
+
+# build output
+bin/
+obj/
+
+# macOS
+.DS_Store
