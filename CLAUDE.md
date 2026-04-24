@@ -96,6 +96,7 @@ sensor:
     json_attributes:
       - today
       - monthly
+      - device
       - last_updated
 
 template:
@@ -152,6 +153,31 @@ template:
         state: >
           {{ state_attr('sensor.energy24by7_icon_data', 'monthly')['trees_saved'] | int(0) if state_attr('sensor.energy24by7_icon_data', 'monthly') else 0 }}
 
+      - name: "Battery Status"
+        unique_id: solar_battery_status
+        unit_of_measurement: "%"
+        icon: mdi:battery
+        state: >
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['battery_percent'] | replace('%', '') | int(0) }}
+
+      - name: "Device State"
+        unique_id: solar_device_state
+        icon: mdi:power-plug
+        state: >
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['current_state'] }}
+
+      - name: "Device ID"
+        unique_id: solar_device_id
+        icon: mdi:identifier
+        state: >
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['device_id'] }}
+
+      - name: "Device Active Since"
+        unique_id: solar_device_active_since
+        icon: mdi:calendar-clock
+        state: >
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['active_since'] }}
+
       - name: "Solar Hourly Labels"
         unique_id: solar_hourly_labels
         unit_of_measurement: "kWh"
@@ -176,6 +202,25 @@ cards:
     badge_icon: mdi:check-circle
     badge_color: green
     fill_container: true
+
+  - type: glance
+    title: Device
+    show_name: true
+    show_icon: true
+    show_state: true
+    entities:
+      - entity: sensor.battery_status
+        name: Battery
+        icon: mdi:battery
+      - entity: sensor.device_state
+        name: State
+        icon: mdi:power-plug
+      - entity: sensor.device_id
+        name: Device ID
+        icon: mdi:identifier
+      - entity: sensor.device_active_since
+        name: Active Since
+        icon: mdi:calendar-clock
 
   - type: glance
     title: Today

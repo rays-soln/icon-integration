@@ -32,7 +32,14 @@ app.MapGet("/solar", (SolarDataCache cache) =>
 
     return Results.Json(new
     {
-        last_updated     = snapshot.LastUpdated,
+        last_updated = snapshot.LastUpdated,
+        device = snapshot.Device is null ? null : new
+        {
+            battery_percent = snapshot.Device.BatteryPercent,
+            current_state   = snapshot.Device.CurrentState,
+            active_since    = snapshot.Device.ActiveSince,
+            device_id       = snapshot.Device.DeviceId
+        },
         today = new
         {
             total_energy_kwh  = snapshot.Today.TotalEnergy,

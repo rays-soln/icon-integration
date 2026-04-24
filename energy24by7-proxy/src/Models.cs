@@ -24,10 +24,19 @@ public class SolarApiResponse
     [JsonPropertyName("description")]  public string        Description  { get; set; } = "";
 }
 
+public class DeviceStatus
+{
+    public string BatteryPercent { get; set; } = "";
+    public string CurrentState   { get; set; } = "";
+    public string ActiveSince    { get; set; } = "";
+    public string DeviceId       { get; set; } = "";
+}
+
 public class CacheSnapshot
 {
-    public SolarApiResponse? Today       { get; set; }
-    public SolarApiResponse? Monthly     { get; set; }
-    public DateTime?         LastUpdated { get; set; }
-    public string?           Error       { get; set; }
+    public SolarApiResponse? Today         { get; set; }
+    public SolarApiResponse? Monthly       { get; set; }
+    public DeviceStatus?     Device        { get; set; }
+    public DateTime?         LastUpdated   { get; set; }
+    public string?           Error         { get; set; }
 }

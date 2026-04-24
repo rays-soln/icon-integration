@@ -1,6 +1,6 @@
 name: Energy24by7 Proxy
 description: Fetches solar data from the Energy24by7 customer portal and exposes it as a local REST API.
-version: "1.0.1"
+version: "1.0.2"
 slug: energy24by7_proxy
 init: false
 arch:

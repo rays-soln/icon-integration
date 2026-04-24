@@ -82,12 +82,14 @@ public class SolarFetchService(
 
             logger.LogInformation("Login successful (landed on {Path}), fetching solar data...", finalUrl);
 
-            // Step 3: Fetch today's data
+            // Step 3: Fetch solar + device data
             var today   = await FetchSolarData(client, "today",   config.DeviceId, ct);
             var monthly = await FetchSolarData(client, "monthly", config.DeviceId, ct);
+            var device  = await FetchDeviceStatus(client, config.DeviceId, ct);
 
-            cache.Update(today, monthly);
-            logger.LogInformation("Cache updated — today: {Energy} kWh", today.TotalEnergy);
+            cache.Update(today, monthly, device);
+            logger.LogInformation("Cache updated — today: {Energy} kWh, battery: {Battery}",
+                today.TotalEnergy, device.BatteryPercent);
 
             // Step 4: Logout
             await LogoutAsync(client, csrfToken, ct);
@@ -97,6 +99,26 @@ public class SolarFetchService(
             logger.LogError(ex, "Fetch cycle failed");
             cache.SetError(ex.Message);
         }
+    }
+
+    private async Task<DeviceStatus> FetchDeviceStatus(HttpClient client, string deviceId, CancellationToken ct)
+    {
+        var html = await client.GetStringAsync($"/device-overview/{deviceId}", ct);
+        var doc  = new HtmlDocument();
+        doc.LoadHtml(html);
+
+        string Label(string label) =>
+            doc.DocumentNode
+               .SelectSingleNode($"//div[@class='info-label'][normalize-space(text())='{label}']/following-sibling::div[1]")
+               ?.InnerText.Trim() ?? "";
+
+        return new DeviceStatus
+        {
+            BatteryPercent = Label("Battery Status"),
+            CurrentState   = Label("Current State"),
+            ActiveSince    = Label("Active Since"),
+            DeviceId       = Label("Device ID")
+        };
     }
 
     private async Task LogoutAsync(HttpClient client, string csrfToken, CancellationToken ct)

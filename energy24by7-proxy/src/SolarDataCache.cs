@@ -5,15 +5,17 @@ public class SolarDataCache
     private readonly object _lock = new();
     private SolarApiResponse? _today;
     private SolarApiResponse? _monthly;
+    private DeviceStatus?     _device;
     private DateTime?         _lastUpdated;
     private string?           _error;
 
-    public void Update(SolarApiResponse today, SolarApiResponse monthly)
+    public void Update(SolarApiResponse today, SolarApiResponse monthly, DeviceStatus device)
     {
         lock (_lock)
         {
             _today       = today;
             _monthly     = monthly;
+            _device      = device;
             _lastUpdated = DateTime.UtcNow;
             _error       = null;
         }
@@ -32,6 +34,7 @@ public class SolarDataCache
             {
                 Today       = _today,
                 Monthly     = _monthly,
+                Device      = _device,
                 LastUpdated = _lastUpdated,
                 Error       = _error
             };
