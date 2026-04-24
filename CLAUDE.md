@@ -153,133 +153,152 @@ template:
         state: >
           {{ state_attr('sensor.energy24by7_icon_data', 'monthly')['trees_saved'] | int(0) if state_attr('sensor.energy24by7_icon_data', 'monthly') else 0 }}
 
-      - name: "Battery Status"
+      - name: "Solar Battery Status"
         unique_id: solar_battery_status
         unit_of_measurement: "%"
         icon: mdi:battery
         state: >
-          {{ state_attr('sensor.energy24by7_icon_data', 'device')['battery_percent'] | replace('%', '') | int(0) }}
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['battery_percent'] | replace('%', '') | int(0) if state_attr('sensor.energy24by7_icon_data', 'device') else 0 }}
 
-      - name: "Device State"
+      - name: "Solar Device State"
         unique_id: solar_device_state
         icon: mdi:power-plug
         state: >
-          {{ state_attr('sensor.energy24by7_icon_data', 'device')['current_state'] }}
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['current_state'] if state_attr('sensor.energy24by7_icon_data', 'device') else '' }}
 
-      - name: "Device ID"
+      - name: "Solar Device ID"
         unique_id: solar_device_id
         icon: mdi:identifier
         state: >
-          {{ state_attr('sensor.energy24by7_icon_data', 'device')['device_id'] }}
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['device_id'] if state_attr('sensor.energy24by7_icon_data', 'device') else '' }}
 
-      - name: "Device Active Since"
+      - name: "Solar Device Active Since"
         unique_id: solar_device_active_since
         icon: mdi:calendar-clock
         state: >
-          {{ state_attr('sensor.energy24by7_icon_data', 'device')['active_since'] }}
+          {{ state_attr('sensor.energy24by7_icon_data', 'device')['active_since'] if state_attr('sensor.energy24by7_icon_data', 'device') else '' }}
 
       - name: "Solar Hourly Labels"
         unique_id: solar_hourly_labels
         unit_of_measurement: "kWh"
-        state: >
-          {{ state_attr('sensor.energy24by7_icon_data', 'today')['total_energy_kwh'] | float(0) }}
+        state: "{{ state_attr('sensor.energy24by7_icon_data', 'today')['total_energy_kwh'] | float(0) }}"
         attributes:
-          energy: >
-            {{ state_attr('sensor.energy24by7_icon_data', 'today')['hourly_energy'] }}
+          energy: "{{ state_attr('sensor.energy24by7_icon_data', 'today')['hourly_energy'] }}"
 ```
 
 ### Dashboard card YAML
 
 ```yaml
-type: vertical-stack
+type: grid
 cards:
-  - type: custom:mushroom-template-card
-    primary: iCON Solar — today
-    secondary: >
-      swasti · CAA0006 · Kollam · updated {{ states('sensor.energy24by7_icon_data') | as_timestamp | timestamp_custom('%I:%M %p') }}
+  - type: heading
+    heading: Solar
+    heading_style: title
     icon: mdi:solar-power
-    icon_color: amber
-    badge_icon: mdi:check-circle
-    badge_color: green
-    fill_container: true
-
-  - type: glance
-    title: Device
-    show_name: true
-    show_icon: true
-    show_state: true
-    entities:
-      - entity: sensor.battery_status
-        name: Battery
-        icon: mdi:battery
-      - entity: sensor.device_state
-        name: State
-        icon: mdi:power-plug
-      - entity: sensor.device_id
-        name: Device ID
-        icon: mdi:identifier
-      - entity: sensor.device_active_since
-        name: Active Since
-        icon: mdi:calendar-clock
-
-  - type: glance
-    title: Today
-    show_name: true
-    show_icon: true
-    show_state: true
-    entities:
-      - entity: sensor.solar_energy_today
-        name: Produced
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-template-card
+        primary: iCON Solar — today
+        secondary: >
+          swasti · CAA0006 · Kollam · updated {{
+          states('sensor.energy24by7_icon_data') | as_timestamp |
+          timestamp_custom('%d %b %I:%M %p') }}
         icon: mdi:solar-power
-      - entity: sensor.solar_utility_savings_today
-        name: Savings
-        icon: mdi:transmission-tower
-      - entity: sensor.solar_carbon_offset_today
-        name: CO₂ offset
-        icon: mdi:leaf
-      - entity: sensor.solar_trees_saved_today
-        name: Trees
-        icon: mdi:tree
-
-  - type: glance
-    title: This month
-    show_name: true
-    show_icon: true
-    show_state: true
-    entities:
-      - entity: sensor.solar_energy_monthly
-        name: Produced
-        icon: mdi:solar-power
-      - entity: sensor.solar_carbon_offset_monthly
-        name: CO₂ offset
-        icon: mdi:leaf
-      - entity: sensor.solar_trees_saved_monthly
-        name: Trees
-        icon: mdi:tree
-
+        icon_color: amber
+        badge_icon: mdi:check-circle
+        badge_color: green
+        fill_container: true
+      - type: glance
+        title: Device
+        show_name: true
+        show_icon: true
+        show_state: true
+        entities:
+          - entity: sensor.solar_battery_status
+            name: Battery
+            icon: mdi:battery
+          - entity: sensor.solar_device_state
+            name: State
+            icon: mdi:power-plug
+          - entity: sensor.solar_device_id
+            name: Device ID
+            icon: mdi:identifier
+          - entity: sensor.solar_device_active_since
+            name: Active Since
+            icon: mdi:calendar-clock
+      - type: glance
+        title: Today
+        show_name: true
+        show_icon: true
+        show_state: true
+        entities:
+          - entity: sensor.solar_energy_today
+            name: Produced
+            icon: mdi:solar-power
+          - entity: sensor.solar_utility_savings_today
+            name: Savings
+            icon: mdi:transmission-tower
+          - entity: sensor.solar_carbon_offset_today
+            name: CO₂ offset
+            icon: mdi:leaf
+          - entity: sensor.solar_trees_saved_today
+            name: Trees
+            icon: mdi:tree
+      - type: glance
+        title: This month
+        show_name: true
+        show_icon: true
+        show_state: true
+        entities:
+          - entity: sensor.solar_energy_monthly
+            name: Produced
+            icon: mdi:solar-power
+          - entity: sensor.solar_carbon_offset_monthly
+            name: CO₂ offset
+            icon: mdi:leaf
+          - entity: sensor.solar_trees_saved_monthly
+            name: Trees
+            icon: mdi:tree
+    grid_options:
+      rows: auto
+      columns: 12
   - type: markdown
-    content: |
-      ## Hourly production
-      {% set e = state_attr('sensor.energy24by7_icon_data', 'today')['hourly_energy'] %}
-      {% set l = state_attr('sensor.energy24by7_icon_data', 'today')['hourly_labels'] %}
+    content: >
+      ## ☀️ Hourly Production
+
+      {% set e = state_attr('sensor.energy24by7_icon_data',
+      'today')['hourly_energy'] %}
+
+      {% set l = state_attr('sensor.energy24by7_icon_data',
+      'today')['hourly_labels'] %}
+
       {% set m = e | max %}
+
       {% for i in range(e | length) %}{% if e[i] > 0 %}
+
       **{{ l[i] }}** {{ '▓' * ((e[i] / m * 15) | int) }} *{{ e[i] }} kWh*
+
       {% endif %}{% endfor %}
-```
 
-The monthly chart is a separate standalone card (not inside the vertical stack):
+      ## Monthly Production
 
-```yaml
-type: markdown
-content: |
-  ## Monthly production
-  {% set e = state_attr('sensor.energy24by7_icon_data', 'monthly')['monthly_energy'] %}
-  {% set l = state_attr('sensor.energy24by7_icon_data', 'monthly')['monthly_labels'] %}
-  {% set m = e | max %}
-  {% for i in range(e | length) %}{% if e[i] > 0 %}
-  **{{ l[i] }}** {{ '▓' * ((e[i] / m * 15) | int) }} *{{ e[i] }} kWh*
-  {% endif %}{% endfor %}
+      {% set e = state_attr('sensor.energy24by7_icon_data',
+      'monthly')['monthly_energy'] %}
+
+      {% set l = state_attr('sensor.energy24by7_icon_data',
+      'monthly')['monthly_labels'] %}
+
+      {% set m = e | max %}
+
+      {% for i in range(e | length) %}{% if e[i] > 0 %}
+
+      **{{ l[i] }}** {{ '▓' * ((e[i] / m * 15) | int) }} *{{ e[i] }} kWh*
+
+      {% endif %}{% endfor %}
+    grid_options:
+      rows: auto
+      columns: 12
+column_span: 2
 ```
 
 ---
